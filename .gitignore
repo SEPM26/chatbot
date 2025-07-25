@@ -1,0 +1,9 @@
+# Ignorar archivos sensibles
+utils.py
+serviceAccountKey.json
+
+# Otros posibles archivos comunes a ignorar
+__pycache__/
+*.pyc
+node_modules/
+.venv/

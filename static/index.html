@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banco Atlántico - Asistente Virtual</title>
+
+  <!-- Fuentes e Íconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="./static/index.css" />
+  <link rel="stylesheet" href="./static/chatbot.css" />
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <header>
+    <div class="logo">
+      <img src="./static/img/atlantico.png" alt="Banco Atlántico" />
+    </div>
+    <div>Asistente Virtual</div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="hero">
+    <div class="container-hero">
+      <div class="hero-left d-none d-md-block"></div>
+
+      <!-- Imagen + texto encima -->
+      <div class="hero-right-with-text" data-aos="fade-left">
+        <div class="blob-wrapper position-relative">
+          <img src="./static/img/perla-icon.png" alt="Perla saludando" class="perla-saludando" />
+
+          <!-- Burbujas desde la cabeza -->
+          <div class="burbuja-mensaje burbuja1">
+            <h1 style="font-weight: 700; font-size: 1.7rem;">¡HOLA SOY <span class="texto-naranja">PERLA</span>!</h1>
+          </div>
+
+          <div class="burbuja-mensaje burbuja2">
+            <p style="font-size: 1.05rem;">Estoy aquí para ayudarte con todos los servicios del Banco Atlántico.</p>
+          </div>
+
+          <div class="burbuja-mensaje burbuja3">
+            <button onclick="toggleChatbot()" class="btn btn-warning btn-sm fw-bold">
+              <i class="bi bi-chat-dots me-1"></i> Habla conmigo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pie de página -->
+  <footer class="text-center py-2 bg-blue text-light">
+    &copy; 2025 Banco Atlántico | Todos los derechos reservados
+  </footer>
+
+  <!-- Chatbot -->
+  <div class="chatbot" id="chatbot">
+    <div class="chat-header">
+      <span>
+        <img src="./static/img/perla-icon.png" alt="Perla" class="icono-perla me-2" />
+        Perla
+      </span>
+      <button class="chat-close btn btn-sm btn-light ms-auto" onclick="toggleChatbot()" title="Cerrar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <div class="bot-message">
+        <i class="bi bi-chat-dots me-2 text-primary"></i>
+        Hola, Soy Perla. ¿En qué puedo ayudarte?
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" id="user-input" placeholder="Escribe tu pregunta..." onkeydown="handleEnter(event)" />
+      <button class="btn btn-secondary ms-2" onclick="startListening()" title="Hablar por micrófono">
+        <i class="bi bi-mic-fill"></i>
+      </button>
+      <button class="chat-send btn btn-primary ms-2" onclick="sendMessage()" title="Enviar mensaje">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>AOS.init();</script>
+  <script src="./static/chatbot.js"></script>
+
+  <!-- Reconocimiento de voz -->
+  <script>
+    function startListening() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Tu navegador no soporta reconocimiento de voz.");
+        return;
+      }
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "es-ES";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.start();
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        document.getElementById("user-input").value = text;
+        sendMessage();
+      };
+      recognition.onerror = (event) => {
+        console.error("Error de reconocimiento:", event.error);
+      };
+    }
+  </script>
+</body>
+</html>
+
