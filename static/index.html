@@ -19,6 +19,57 @@
     * {
       font-family: 'Poppins', sans-serif !important;
     }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        height: auto;
+        padding: 1rem;
+      }
+
+      .logo img {
+        height: 100px;
+      }
+
+      .hero {
+        padding: 1rem;
+      }
+
+      .container-hero {
+        flex-direction: column !important;
+        align-items: center;
+      }
+
+      .hero-right-with-text {
+        width: 100%;
+        text-align: center;
+      }
+
+      .blob-wrapper {
+        gap: 0.8rem;
+        max-width: 100%;
+      }
+
+      .perla-saludando {
+        width: 80%;
+        margin-left: 0;
+      }
+
+      .burbuja-mensaje h1 {
+        font-size: 1.3rem;
+      }
+
+      .burbuja-mensaje p {
+        font-size: 1rem;
+      }
+
+      .burbuja-mensaje button {
+        width: auto;
+        margin-left: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -33,12 +84,12 @@
 
   <!-- Contenido principal -->
   <main class="hero">
-    <div class="container-hero">
+    <div class="container-hero d-flex justify-content-center align-items-center flex-md-row flex-column">
       <div class="hero-left d-none d-md-block"></div>
 
       <!-- Imagen + texto encima -->
       <div class="hero-right-with-text" data-aos="fade-left">
-        <div class="blob-wrapper position-relative">
+        <div class="blob-wrapper position-relative d-flex flex-column align-items-center">
           <img src="./static/img/perla-icon.png" alt="Perla saludando" class="perla-saludando" />
 
           <!-- Burbujas desde la cabeza -->
@@ -125,4 +176,3 @@
   </script>
 </body>
 </html>
-
