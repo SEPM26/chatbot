@@ -147,3 +147,44 @@ footer {
   font-size: 0.9rem;
   flex-shrink: 0;
 }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .logo img {
+    height: 100px;
+    margin-bottom: 10px;
+  }
+
+  .hero {
+    padding: 1.2rem;
+  }
+
+  .perla-saludando {
+    width: 260px;
+    margin-left: 0;
+  }
+
+  .burbuja-mensaje h1 {
+    font-size: 1.3rem;
+  }
+
+  .burbuja-mensaje p {
+    font-size: 1rem;
+  }
+
+  .burbuja-mensaje button {
+    margin-left: 0;
+    font-size: 0.95rem;
+  }
+
+  footer {
+    font-size: 0.8rem;
+  }
+}
