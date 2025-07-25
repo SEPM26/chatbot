@@ -85,7 +85,7 @@ body {
   align-self: flex-start;
   border: 1px solid #dce3eb;
   color: #333;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .user-message {
@@ -146,4 +146,45 @@ body {
   object-fit: cover;
   margin-right: 10px;
   image-rendering: -webkit-optimize-contrast;
+}
+
+/* ===================== RESPONSIVE ====================== */
+@media screen and (max-width: 480px) {
+  .chatbot {
+    right: 10px;
+    bottom: 70px;
+    width: 95%;
+    height: 90vh;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  .chatbot-toggle {
+    bottom: 15px;
+    right: 15px;
+    padding: 10px;
+    font-size: 20px;
+  }
+
+  .chat-footer input {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .chat-footer button {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .chat-header {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .bot-message,
+  .user-message {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
 }
