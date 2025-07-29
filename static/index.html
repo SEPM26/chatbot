@@ -20,6 +20,27 @@
       font-family: 'Poppins', sans-serif !important;
     }
 
+    .perla-saludando {
+      width: 400px;
+      max-width: 100%;
+      margin-bottom: 1rem;
+      margin-left: 50px;
+      cursor: pointer;
+    }
+
+    .perla-animada {
+      animation: saludo 5s ease-in-out infinite;
+    }
+
+    @keyframes saludo {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(10deg); }
+      40% { transform: rotate(-10deg); }
+      60% { transform: rotate(10deg); }
+      80% { transform: rotate(-5deg); }
+      100% { transform: rotate(0deg); }
+    }
+
     @media (max-width: 768px) {
       header {
         flex-direction: column;
@@ -90,15 +111,15 @@
       <!-- Imagen + texto encima -->
       <div class="hero-right-with-text" data-aos="fade-left">
         <div class="blob-wrapper position-relative d-flex flex-column align-items-center">
-          <img src="./static/img/perla-icon.png" alt="Perla saludando" class="perla-saludando" />
+          <img src="./static/img/perla-icon.png" alt="Perla saludando" class="perla-saludando perla-animada" id="perlaAnimada" />
 
           <!-- Burbujas desde la cabeza -->
           <div class="burbuja-mensaje burbuja1">
             <h1 style="font-weight: 700; font-size: 1.7rem;">¡HOLA SOY <span class="texto-naranja">PERLA</span>!</h1>
           </div>
 
-          <div class="burbuja-mensaje burbuja2">
-            <p style="font-size: 1.05rem;">Estoy aquí para ayudarte con todos los servicios del Banco Atlántico.</p>
+          <div class="burbuja-mensaje burbuja2" style="margin-left: 80px;">
+            <p style="font-size: 1.10rem; white-space: nowrap; display: inline;">Estoy aquí para ayudarte con todos los servicios del Banco Atlántico.</p>
           </div>
 
           <div class="burbuja-mensaje burbuja3">
@@ -120,7 +141,7 @@
   <div class="chatbot" id="chatbot">
     <div class="chat-header">
       <span>
-        <img src="./static/img/perla-icon.png" alt="Perla" class="icono-perla me-2" />
+        <img src="./static/img/Perla-icon.ico" alt="Perla" class="icono-perla me-2" />
         Perla
       </span>
       <button class="chat-close btn btn-sm btn-light ms-auto" onclick="toggleChatbot()" title="Cerrar">
@@ -152,26 +173,96 @@
   <script>AOS.init();</script>
   <script src="./static/chatbot.js"></script>
 
-  <!-- Reconocimiento de voz -->
+  <!-- Reconocimiento de voz + control de Perla -->
   <script>
+    function toggleChatbot() {
+      const bot = document.getElementById("chatbot");
+      bot.style.display = bot.style.display === "flex" ? "none" : "flex";
+    }
+
+    function handleEnter(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    }
+
+    function sendMessage(text = null) {
+      const input = document.getElementById("user-input");
+      const message = text || input.value.trim();
+      if (!message) return;
+
+      appendMessage("user", message);
+      input.value = "";
+
+      fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mensaje: message })
+      })
+        .then(res => res.json())
+        .then(data => {
+          appendMessage("bot", data.respuesta);
+          speakText(data.respuesta);
+        })
+        .catch(() => {
+          appendMessage("bot", "❌ Error al contactar el servidor.");
+        });
+    }
+
+    function appendMessage(sender, text) {
+      const chat = document.getElementById("chat-body");
+      const div = document.createElement("div");
+      div.className = sender === "bot" ? "bot-message" : "user-message";
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // 🎤 Reconocimiento de voz
+    let recognition;
     function startListening() {
       if (!('webkitSpeechRecognition' in window)) {
         alert("Tu navegador no soporta reconocimiento de voz.");
         return;
       }
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = "es-ES";
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = "es-DO";
+      recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        appendMessage("bot", "🎙️ Escuchando...");
+      };
+
+      recognition.onresult = event => {
+        const result = event.results[0][0].transcript;
+        sendMessage(result);
+      };
+
+      recognition.onerror = () => {
+        appendMessage("bot", "❌ No se pudo escuchar. Inténtalo de nuevo.");
+      };
+
       recognition.start();
-      recognition.onresult = (event) => {
-        const text = event.results[0][0].transcript;
-        document.getElementById("user-input").value = text;
-        sendMessage();
-      };
-      recognition.onerror = (event) => {
-        console.error("Error de reconocimiento:", event.error);
-      };
+    }
+
+    // 🖼️ Control de animación de Perla (clic para pausar o reanudar)
+    document.addEventListener("DOMContentLoaded", () => {
+      const perla = document.getElementById("perlaAnimada");
+      if (perla) {
+        perla.addEventListener("click", () => {
+          perla.classList.toggle("perla-animada");
+        });
+      }
+    });
+
+    // 🗣️ Voz de salida
+    function speakText(text) {
+      if ("speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "es-DO";
+        speechSynthesis.speak(utterance);
+      }
     }
   </script>
 </body>

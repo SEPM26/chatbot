@@ -64,9 +64,24 @@ header div:last-child {
 .perla-saludando {
   width: 400px;
   max-width: 100%;
-  animation: saludo 5s ease-in-out infinite;
   margin-bottom: 1rem;
-  margin-left: 50px; /* Ajusta este valor según lo que necesites */
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+/* CLASE QUE CONTROLA LA ANIMACIÓN DE PERLA */
+.perla-animada {
+  animation: saludo 5s ease-in-out infinite;
+}
+
+/* ANIMACIÓN DE SALUDO */
+@keyframes saludo {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(10deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(10deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
 }
 
 /* TEXTO DESTACADO */
@@ -116,7 +131,7 @@ header div:last-child {
   background-color: #cf4d1e;
 }
 
-/* ANIMACIÓN ENTRADA */
+/* ANIMACIÓN ENTRADA DE BURBUJAS */
 @keyframes subirBurbujita {
   from {
     opacity: 0;
@@ -126,16 +141,6 @@ header div:last-child {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* ANIMACIÓN DE SALUDO */
-@keyframes saludo {
-  0% { transform: rotate(0deg); }
-  20% { transform: rotate(10deg); }
-  40% { transform: rotate(-10deg); }
-  60% { transform: rotate(10deg); }
-  80% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
 }
 
 /* FOOTER */

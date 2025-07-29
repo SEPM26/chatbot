@@ -63,7 +63,7 @@ function startListening() {
     sendMessage(result);
   };
 
-  recognition.onerror = event => {
+  recognition.onerror = () => {
     appendMessage("bot", "❌ No se pudo escuchar. Inténtalo de nuevo.");
   };
 
@@ -78,3 +78,14 @@ function speakText(text) {
     speechSynthesis.speak(utterance);
   }
 }
+
+// 🖼️ Control de animación de Perla (saludo) al hacer clic
+document.addEventListener("DOMContentLoaded", () => {
+  const perla = document.getElementById("perlaAnimada");
+
+  if (perla) {
+    perla.addEventListener("click", () => {
+      perla.classList.toggle("perla-animada");
+    });
+  }
+});
