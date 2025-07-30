@@ -2,35 +2,43 @@ import firebase_admin
 from firebase_admin import credentials, db
 from unidecode import unidecode
 
-cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://chatbotemp-default-rtdb.firebaseio.com/'
-})
+# Inicializar Firebase una sola vez
+if not firebase_admin._apps:
+    cred = credentials.Certificate("serviceAccountKey.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://chatbotemp-default-rtdb.firebaseio.com/'
+    })
 
 def normalizar(texto):
     return unidecode(texto.lower().strip())
 
 def buscar_empleado_por_nombre(nombre):
-    ref = db.reference("empleados")
-    empleados = ref.get()
+    try:
+        ref = db.reference("/empleados")
+        empleados = ref.get()
+    except Exception as e:
+        raise Exception(f"Error conectando a Firebase: {e}")
 
     if not empleados:
         return None
 
-    nombre = normalizar(nombre)
+    nombre_normalizado = normalizar(nombre)
+    partes = nombre_normalizado.split()
 
-    nombre_partes = nombre.split()
+    coincidencias = []
 
-    if isinstance(empleados, list):
-        datos_iterables = empleados
-    elif isinstance(empleados, dict):
-        datos_iterables = empleados.values()
+    fuente = empleados.values() if isinstance(empleados, dict) else empleados
+
+    for datos in fuente:
+        if not datos:
+            continue
+        nombre_empleado = normalizar(datos.get("nombre", ""))
+        if all(p in nombre_empleado for p in partes):
+            coincidencias.append(datos)
+
+    if len(coincidencias) == 1:
+        return coincidencias[0]
+    elif len(coincidencias) > 1:
+        return {"ambiguo": True, "resultados": coincidencias}
     else:
         return None
-
-    for datos in datos_iterables:
-        nombre_empleado = normalizar(datos.get("nombre", ""))
-        if all(parte in nombre_empleado for parte in nombre_partes):
-            return datos
-
-    return None

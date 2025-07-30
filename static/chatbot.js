@@ -1,3 +1,5 @@
+const BASE_URL = "http://localhost:8000"; // Cambia esto si estás en producción
+
 function toggleChatbot() {
   const bot = document.getElementById("chatbot");
   bot.style.display = bot.style.display === "flex" ? "none" : "flex";
@@ -17,12 +19,15 @@ function sendMessage(text = null) {
   appendMessage("user", message);
   input.value = "";
 
-  fetch("/api/chat", {
+  fetch(`${BASE_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ mensaje: message })
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error("Error de servidor");
+      return res.json();
+    })
     .then(data => {
       appendMessage("bot", data.respuesta);
       speakText(data.respuesta);
@@ -35,7 +40,7 @@ function sendMessage(text = null) {
 function appendMessage(sender, text) {
   const chat = document.getElementById("chat-body");
   const div = document.createElement("div");
-  div.className = sender === "bot" ? "bot-message" : "user-message";
+  div.className = sender === "bot" ? "bot-message fade-in" : "user-message";
   div.textContent = text;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
@@ -79,10 +84,8 @@ function speakText(text) {
   }
 }
 
-// 🖼️ Control de animación de Perla (saludo) al hacer clic
 document.addEventListener("DOMContentLoaded", () => {
   const perla = document.getElementById("perlaAnimada");
-
   if (perla) {
     perla.addEventListener("click", () => {
       perla.classList.toggle("perla-animada");

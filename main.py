@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from  firebase_conn import buscar_empleado_por_nombre
+from firebase_conn import buscar_empleado_por_nombre
 from utils import responder_con_ia
 import re
 
@@ -18,61 +18,51 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
 class Consulta(BaseModel):
     mensaje: str
 
-
 def extraer_nombre(texto: str) -> str:
-    # Elimina signos y separa en palabras
     palabras = re.findall(r"[A-ZÁÉÍÓÚÑa-záéíóúñ]+", texto)
-
     if len(palabras) >= 2:
-        nombre = f"{palabras[-2].capitalize()} {palabras[-1].capitalize()}"
+        return f"{palabras[-2].capitalize()} {palabras[-1].capitalize()}"
     elif len(palabras) == 1:
-        nombre = palabras[0].capitalize()
-    else:
-        nombre = ""
-
-    return nombre
-
+        return palabras[0].capitalize()
+    return ""
 
 @app.get("/", response_class=FileResponse)
 def get_index():
     return FileResponse("static/index.html")
 
-
 @app.post("/api/chat")
 def responder(consulta: Consulta):
     mensaje = consulta.mensaje.strip()
     nombre = extraer_nombre(mensaje)
+    print(f"🔎 Buscando: {nombre}")
 
-    print("🧠 Nombre detectado:", nombre)
-
-    # Si parece consulta sobre empleado
-    es_consulta_empleado = any(p in mensaje.lower() for p in [
-        "extension", "correo", "email", "trabaja", "departamento", "empleado", "id"
+    es_empleado = any(p in mensaje.lower() for p in [
+        "correo", "email", "extension", "trabaja", "departamento"
     ])
 
-    if es_consulta_empleado and nombre:
-        empleado = buscar_empleado_por_nombre(nombre)
+    if es_empleado and nombre:
+        try:
+            empleado = buscar_empleado_por_nombre(nombre)
+        except Exception as e:
+            return {"respuesta": f"❌ Error al buscar en la base de datos: {str(e)}"}
+
+        if isinstance(empleado, dict) and empleado.get("ambiguo"):
+            nombres = [emp["nombre"] for emp in empleado["resultados"]]
+            return {"respuesta": f"Encontré varios empleados con ese nombre: {', '.join(nombres)}. ¿Podrías ser más específico?"}
 
         if empleado:
-            mensaje_lower = mensaje.lower()
-            if "extension" in mensaje_lower:
-                return {"respuesta": f"La extensión de {empleado['nombre']} es {empleado['extension']}."}
-            elif "correo" in mensaje_lower or "email" in mensaje_lower:
+            if "correo" in mensaje.lower() or "email" in mensaje.lower():
                 return {"respuesta": f"El correo de {empleado['nombre']} es {empleado['correo']}."}
-            elif "departamento" in mensaje_lower or "trabaja" in mensaje_lower:
-                return {"respuesta": f"{empleado['nombre']} trabaja en {empleado['departamento']}."}
+            elif "extension" in mensaje.lower():
+                return {"respuesta": f"La extensión de {empleado['nombre']} es {empleado['extension']}."}
+            elif "departamento" in mensaje.lower() or "trabaja" in mensaje.lower():
+                return {"respuesta": f"{empleado['nombre']} trabaja en el departamento de {empleado['departamento']}."}
             else:
-                return {
-                    "respuesta": f"{empleado['nombre']} trabaja en {empleado['departamento']}, "
-                                 f"su extensión es {empleado['extension']} y su correo es {empleado['correo']}."
-                }
+                return {"respuesta": f"{empleado['nombre']} - {empleado['departamento']}, Ext: {empleado['extension']}, Correo: {empleado['correo']}"}
         else:
-            return {"respuesta": f"No tengo información sobre el empleado llamado {nombre}."}
+            return {"respuesta": f"No encontré información sobre {nombre}."}
 
-    # Si no es sobre un empleado, responde con IA
-    respuesta = responder_con_ia(mensaje)
-    return {"respuesta": respuesta}
+    return {"respuesta": responder_con_ia(mensaje)}
