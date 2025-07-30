@@ -6,5 +6,6 @@ serviceAccountKey.json
 # Otros posibles archivos comunes a ignorar
 __pycache__/
 *.pyc
-node_modules/
+node_modules/git push origin --force
+
 .venv/
