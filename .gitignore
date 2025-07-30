@@ -1,6 +1,6 @@
 # Ignorar archivos sensibles
 utils.py
-serviceAccountKey.py
+serviceAccountKey.json
 
 
 # Otros posibles archivos comunes a ignorar
