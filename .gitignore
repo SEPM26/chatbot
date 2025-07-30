@@ -1,6 +1,7 @@
 # Ignorar archivos sensibles
 utils.py
-serviceAccountKey.json
+serviceAccountKey.py
+
 
 # Otros posibles archivos comunes a ignorar
 __pycache__/
