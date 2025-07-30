@@ -22,10 +22,20 @@ def insertar_empleado(clave_id, nombre, departamento, extension, correo):
 
 
 if __name__ == "__main__":
+    
     insertar_empleado(
-        clave_id="maria_fernandez",
-        nombre="María Fernández",
-        departamento="Recursos Humanos",
-        extension="104",
-        correo="maria.fernandez@empresa.com"
+        clave_id="1",
+        nombre="German Antonio Carrasco",
+        departamento="Tecnologia",
+        extension="1264",
+        correo="gcarrasco@bancoatlantico.com.do"
     )
+
+    insertar_empleado(
+        clave_id="2",
+        nombre="Benjamin Fermin",
+        departamento="Tecnologia",
+        extension="1253",
+        correo="bfermin@bancoatlantico.com.do"
+    )
+
